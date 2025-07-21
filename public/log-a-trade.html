@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Log a Trade</title>
+        <link rel="stylesheet" href="styles.css" />
+    </head>
+    <body>
+        <header class="header-bar">
+            <nav class="nav-left">
+                <a href="index.html" class="nav-link">HOME</a>
+                <a href="log-a-trade.html" class="nav-link">LOG A TRADE</a>
+                <a href="journal.html" class="nav-link">JOURNAL</a>
+            </nav>
+            <nav class="nav-right">
+                <button class="btn login-btn">Login</button>
+                <button class="btn signout-btn">Sign Out</button>
+            </nav>
+        </header>
+        <header>Log a Trade</header>
+        <main class="container">
+            <form id="tradeForm" class="entry-form" autocomplete="off">
+                <div class="entry-section relative">
+                    <label for="symbol">Stock Symbol</label>
+                    <input
+                        type="text"
+                        id="symbol"
+                        name="symbol"
+                        required
+                        placeholder="Start typing to search symbols"
+                        autocomplete="off"
+                    />
+                    <div id="symbolList" class="autocomplete-list hidden"></div>
+                </div>
+
+                <div class="entry-section">
+                    <label for="companyName">Company Name</label>
+                    <input
+                        type="text"
+                        id="companyName"
+                        name="companyName"
+                        readonly
+                        placeholder="Select a symbol above"
+                    />
+                </div>
+
+                <div class="entry-section">
+                    <label for="tradeType">Trade Type</label>
+                    <select id="tradeType" name="tradeType" required>
+                        <option value="">-- Select --</option>
+                        <option value="Long">Long</option>
+                        <option value="Short">Short</option>
+                    </select>
+                </div>
+
+                <div class="entry-section">
+                    <label for="entryPrice">Entry Price (USD)</label>
+                    <input
+                        type="number"
+                        step="0.01"
+                        id="entryPrice"
+                        name="entryPrice"
+                        required
+                        min="0"
+                    />
+                </div>
+
+                <div class="entry-section">
+                    <label for="exitPrice">Exit Price (USD)</label>
+                    <input
+                        type="number"
+                        step="0.01"
+                        id="exitPrice"
+                        name="exitPrice"
+                        min="0"
+                    />
+                </div>
+
+                <div class="entry-section">
+                    <label for="quantity">Quantity (Shares)</label>
+                    <input
+                        type="number"
+                        id="quantity"
+                        name="quantity"
+                        required
+                        min="1"
+                    />
+                </div>
+
+                <div class="entry-section">
+                    <label for="positionSize">Position Size (USD)</label>
+                    <input
+                        type="number"
+                        step="0.01"
+                        id="positionSize"
+                        name="positionSize"
+                        min="0"
+                        placeholder="Optional"
+                    />
+                </div>
+
+                <div class="entry-section">
+                    <label for="entryDate">Entry Date</label>
+                    <input
+                        type="date"
+                        id="entryDate"
+                        name="entryDate"
+                        required
+                    />
+                </div>
+
+                <div class="entry-section">
+                    <label for="exitDate">Exit Date</label>
+                    <input type="date" id="exitDate" name="exitDate" />
+                </div>
+
+                <div class="entry-section">
+                    <label for="stopLoss">Stop Loss Price (USD)</label>
+                    <input
+                        type="number"
+                        step="0.01"
+                        id="stopLoss"
+                        name="stopLoss"
+                        min="0"
+                        placeholder="Optional"
+                    />
+                </div>
+
+                <div class="entry-section">
+                    <label for="takeProfit">Take Profit Price (USD)</label>
+                    <input
+                        type="number"
+                        step="0.01"
+                        id="takeProfit"
+                        name="takeProfit"
+                        min="0"
+                        placeholder="Optional"
+                    />
+                </div>
+
+                <div class="entry-section">
+                    <label for="notes">Notes</label>
+                    <textarea
+                        id="notes"
+                        name="notes"
+                        rows="4"
+                        placeholder="Add any comments or trade rationale here..."
+                    ></textarea>
+                </div>
+
+                <button type="submit" class="btn" id="submitBtn">
+                    Log Trade
+                </button>
+                <p id="statusMsg" class="info"></p>
+            </form>
+        </main>
+
+        <script src="script.js"></script>
+    </body>
+</html>

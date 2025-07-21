@@ -1,32 +1,119 @@
+// index.js
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
-const cors = require("cors");
-require("dotenv").config();
+const path = require("path");
+const axios = require("axios");
 
 const app = express();
+const PORT = process.env.PORT || 3000;
 
-// Middleware
+// Middleware to parse JSON bodies
 app.use(express.json());
-app.use(cors());
-app.use(express.static("public"));
 
-// MongoDB connection
-mongoose
-    .connect(process.env.MONGO_URI)
-    .then(() => console.log("✅ MongoDB connected"))
-    .catch((err) => console.error("❌ MongoDB connection error:", err));
-
-// Simple test route
-app.get("/", (req, res) => {
-    res.send("🚀 Welcome to Logfolio API");
+// Connect to MongoDB
+mongoose.connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+});
+const db = mongoose.connection;
+db.on("error", console.error.bind(console, "MongoDB connection error:"));
+db.once("open", () => {
+    console.log("Connected to MongoDB");
 });
 
-// Placeholder for future routes (e.g., trade journal, auth)
-app.use("/api/trades", require("./routes/trades")); // create this later
-app.use("/api/auth", require("./routes/auth")); // create this later
+// Define Mongoose schema for trade log
+const tradeSchema = new mongoose.Schema({
+    userId: String, // you can extend with auth later
+    symbol: String,
+    companyName: String,
+    entryPrice: Number,
+    exitPrice: Number,
+    quantity: Number,
+    positionSize: Number,
+    tradeType: String,
+    entryDate: Date,
+    exitDate: Date,
+    stopLoss: Number,
+    takeProfit: Number,
+    notes: String,
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
+});
 
-// Start server
-const PORT = process.env.PORT || 5000;
+const Trade = mongoose.model("Trade", tradeSchema);
+
+// Serve static frontend files from 'public' folder
+app.use(express.static(path.join(__dirname, "public")));
+
+// API route: Search stock symbols (proxy to Finnhub)
+app.get("/api/search-symbols", async (req, res) => {
+    const query = req.query.q;
+    if (!query)
+        return res.status(400).json({ error: "Query parameter q is required" });
+
+    try {
+        const response = await axios.get("https://finnhub.io/api/v1/search", {
+            params: {
+                q: query,
+                token: process.env.FINNHUB_API_KEY,
+            },
+        });
+        res.json(response.data);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Failed to fetch symbol data" });
+    }
+});
+
+// API route: Get company profile by symbol
+app.get("/api/company-profile", async (req, res) => {
+    const symbol = req.query.symbol;
+    if (!symbol)
+        return res
+            .status(400)
+            .json({ error: "Symbol query parameter is required" });
+
+    try {
+        const response = await axios.get(
+            "https://finnhub.io/api/v1/stock/profile2",
+            {
+                params: {
+                    symbol,
+                    token: process.env.FINNHUB_API_KEY,
+                },
+            }
+        );
+        res.json(response.data);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Failed to fetch company profile" });
+    }
+});
+
+// API route: Create a new trade log
+app.post("/api/trades", async (req, res) => {
+    try {
+        const trade = new Trade(req.body);
+        const savedTrade = await trade.save();
+        res.status(201).json(savedTrade);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Failed to save trade" });
+    }
+});
+
+// API route: Get all trades (simple example, no auth)
+app.get("/api/trades", async (req, res) => {
+    try {
+        const trades = await Trade.find().sort({ createdAt: -1 });
+        res.json(trades);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Failed to get trades" });
+    }
+});
+
 app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
