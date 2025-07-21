@@ -46,23 +46,22 @@ const Trade = mongoose.model("Trade", tradeSchema);
 // Serve static frontend files from 'public' folder
 app.use(express.static(path.join(__dirname, "public")));
 
-// API route: Search stock symbols (proxy to Finnhub)
 app.get("/api/search-symbols", async (req, res) => {
-    const query = req.query.q;
-    if (!query)
-        return res.status(400).json({ error: "Query parameter q is required" });
+    const userQuery = req.query.query || req.query.q; // Accept both ?query= and ?q=
+
+    if (!userQuery) {
+        return res.status(400).json({ error: "Query parameter is required" });
+    }
+
+    const url = `https://finnhub.io/api/v1/search?q=${userQuery}&token=${process.env.FINNHUB_API_KEY}`;
 
     try {
-        const response = await axios.get("https://finnhub.io/api/v1/search", {
-            params: {
-                q: query,
-                token: process.env.FINNHUB_API_KEY,
-            },
-        });
-        res.json(response.data);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Failed to fetch symbol data" });
+        const response = await fetch(url);
+        const data = await response.json();
+        res.json(data);
+    } catch (err) {
+        console.error("Error fetching symbols:", err);
+        res.status(500).json({ error: "Something went wrong" });
     }
 });
 
