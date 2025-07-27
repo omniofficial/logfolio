@@ -94,6 +94,33 @@ app.get("/api/company-profile", async (req, res) => {
         res.status(500).json({ error: "Failed to fetch company profile" });
     }
 });
+// Analyst recommendations route
+app.get("/api/recommendations", async (req, res) => {
+    const symbol = req.query.symbol;
+    if (!symbol) {
+        return res
+            .status(400)
+            .json({ error: "Symbol query parameter is required" });
+    }
+
+    try {
+        const url = `https://finnhub.io/api/v1/stock/recommendation?symbol=${encodeURIComponent(
+            symbol
+        )}&token=${process.env.FINNHUB_API_KEY}`;
+        const response = await axios.get(url);
+
+        // Finnhub returns an array of recommendations (usually sorted by date desc)
+        // We'll return the most recent entry (first element)
+        if (response.data && response.data.length > 0) {
+            res.json(response.data[0]);
+        } else {
+            res.status(404).json({ error: "No recommendation data found" });
+        }
+    } catch (error) {
+        console.error("Error fetching recommendations:", error.message);
+        res.status(500).json({ error: "Failed to fetch recommendations" });
+    }
+});
 
 // Create trade
 app.post("/api/trades", async (req, res) => {
@@ -129,6 +156,47 @@ app.get("/api/trades/:id", async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Failed to fetch trade" });
+    }
+});
+
+// Updated server.js news route with better filtering
+app.get("/api/news", async (req, res) => {
+    const symbol = req.query.symbol;
+    if (!symbol) {
+        return res
+            .status(400)
+            .json({ error: "Symbol query parameter is required" });
+    }
+
+    try {
+        // Use both the symbol (e.g. AAPL) and company name (e.g. Apple Inc) to broaden match
+        const company = await Trade.findOne({ symbol }).sort({ updatedAt: -1 });
+        const companyName = company?.companyName || "";
+
+        const query = `${symbol} OR \"${companyName}\"`;
+
+        const response = await axios.get("https://newsapi.org/v2/everything", {
+            params: {
+                q: query,
+                sortBy: "publishedAt",
+                language: "en",
+                apiKey: process.env.NEWS_API_KEY, // moved to env
+                pageSize: 5,
+                sources: [
+                    "bloomberg",
+                    "cnbc",
+                    "business-insider",
+                    "financial-post",
+                    "the-wall-street-journal",
+                    "reuters",
+                ].join(","), // target financial news sources only
+            },
+        });
+
+        res.json(response.data);
+    } catch (err) {
+        console.error("Error fetching news:", err.message);
+        res.status(500).json({ error: "Failed to fetch news articles" });
     }
 });
 

@@ -659,6 +659,61 @@ body > header {
 .entry-section {
     border-bottom: none !important;
 }
+
+.news-article {
+    border-bottom: 1px solid #444;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+}
+
+.news-article a {
+    color: #e63946;
+    text-decoration: none;
+}
+
+.news-article a:hover {
+    text-decoration: underline;
+}
+
+.news-article small {
+    color: #888;
+}
+
+#entryDetails {
+    border-bottom: 2px solid #e63946; /* red line */
+    padding-bottom: 2rem; /* space inside the bottom */
+    margin-bottom: 3rem; /* space outside below the line */
+}
+
+#relatedNews {
+    border-bottom: 2px solid #e63946;
+    padding-bottom: 2rem;
+    margin-bottom: 3rem;
+}
+
+#recommendations {
+    border-bottom: 2px solid #e63946;
+    padding-bottom: 2rem;
+    margin-bottom: 3rem;
+}
+
+#recommendations ul {
+    list-style: none;
+    padding-left: 0;
+    color: #ccc;
+}
+
+#recommendations ul li {
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+#recommendations p {
+    color: #aaa;
+    font-style: italic;
+    margin-top: 0.5rem;
+}
+
 /* Responsive tweak */
 @media (max-width: 640px) {
     .container {

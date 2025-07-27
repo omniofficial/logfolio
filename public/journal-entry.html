@@ -19,64 +19,21 @@
             <div id="entryDetails">
                 <p>Loading...</p>
             </div>
+
+            <section id="relatedNews">
+                <h2>Related News</h2>
+                <div class="news-articles">
+                    <p>Loading articles...</p>
+                </div>
+            </section>
+            <section id="recommendations">
+                <h2>Analyst Recommendations</h2>
+                <div id="recommendationDetails">
+                    <p>Loading analyst recommendations...</p>
+                </div>
+            </section>
         </main>
 
-        <script>
-            document.addEventListener("DOMContentLoaded", async () => {
-                const id = window.location.pathname.split("/").pop();
-
-                const container = document.getElementById("entryDetails");
-
-                if (!id) {
-                    container.innerHTML = "<p>No entry ID provided.</p>";
-                    return;
-                }
-
-                try {
-                    const res = await fetch(`/api/trades/${id}`);
-                    const trade = await res.json();
-
-                    const profit =
-                        trade.exitPrice && trade.entryPrice && trade.quantity
-                            ? (
-                                  (trade.exitPrice - trade.entryPrice) *
-                                  trade.quantity
-                              ).toFixed(2)
-                            : "N/A";
-
-                    container.innerHTML = `
-                        <h1>${trade.symbol} (${trade.companyName || ""})</h1>
-                        <p><strong>Trade Type:</strong> ${trade.tradeType}</p>
-                        <p><strong>Entry Price:</strong> $${
-                            trade.entryPrice
-                        }</p>
-                        <p><strong>Exit Price:</strong> $${trade.exitPrice}</p>
-                        <p><strong>Quantity:</strong> ${trade.quantity}</p>
-                        <p><strong>Profit:</strong> $${profit}</p>
-                        <p><strong>Entry Date:</strong> ${new Date(
-                            trade.entryDate
-                        ).toLocaleDateString()}</p>
-                        <p><strong>Exit Date:</strong> ${
-                            trade.exitDate
-                                ? new Date(trade.exitDate).toLocaleDateString()
-                                : "—"
-                        }</p>
-                        <p><strong>Stop Loss:</strong> ${
-                            trade.stopLoss ?? "—"
-                        }</p>
-                        <p><strong>Take Profit:</strong> ${
-                            trade.takeProfit ?? "—"
-                        }</p>
-                        <p><strong>Notes:</strong><br/>${
-                            trade.notes || "None"
-                        }</p>
-                    `;
-                } catch (err) {
-                    console.error("Error loading trade:", err);
-                    container.innerHTML =
-                        "<p>Failed to load journal entry. Try again later.</p>";
-                }
-            });
-        </script>
+        <script src="/journal-entry.js"></script>
     </body>
 </html>
