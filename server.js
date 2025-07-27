@@ -128,11 +128,9 @@ app.get("/api/insider-sentiment", async (req, res) => {
     const to = req.query.to;
 
     if (!symbol || !from || !to) {
-        return res
-            .status(400)
-            .json({
-                error: "symbol, from, and to query parameters are required",
-            });
+        return res.status(400).json({
+            error: "symbol, from, and to query parameters are required",
+        });
     }
 
     try {
@@ -153,6 +151,32 @@ app.get("/api/insider-sentiment", async (req, res) => {
     } catch (error) {
         console.error("Error fetching insider sentiment:", error.message);
         res.status(500).json({ error: "Failed to fetch insider sentiment" });
+    }
+});
+
+// IPO Calendar route
+app.get("/api/ipo-calendar", async (req, res) => {
+    const from = req.query.from;
+    const to = req.query.to;
+
+    if (!from || !to) {
+        return res
+            .status(400)
+            .json({ error: "'from' and 'to' query parameters are required" });
+    }
+
+    try {
+        const url = `https://finnhub.io/api/v1/calendar/ipo?from=${from}&to=${to}&token=${process.env.FINNHUB_API_KEY}`;
+        const response = await axios.get(url);
+
+        if (response.data && response.data.ipoCalendar) {
+            res.json(response.data);
+        } else {
+            res.status(404).json({ error: "No IPO calendar data found" });
+        }
+    } catch (error) {
+        console.error("Error fetching IPO calendar:", error.message);
+        res.status(500).json({ error: "Failed to fetch IPO calendar" });
     }
 });
 

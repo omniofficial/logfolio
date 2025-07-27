@@ -74,6 +74,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         // Load insider sentiment data
         loadInsiderSentiment(trade.symbol);
+
+        // Load IPO calendar data for last 3 months
+        loadIPOcalendar();
     } catch (err) {
         console.error("Error loading trade or news:", err);
         container.innerHTML = "<p>Failed to load journal entry.</p>";
@@ -166,5 +169,70 @@ async function loadInsiderSentiment(symbol) {
     } catch (error) {
         container.innerHTML = "<p>Failed to load insider sentiment data.</p>";
         console.error("Error loading insider sentiment:", error);
+    }
+}
+
+// New function to load IPO calendar data (last 3 months)
+async function loadIPOcalendar() {
+    const container = document.getElementById("ipoCalendarDetails");
+    if (!container) return;
+
+    // Calculate from/to dates for last 3 months
+    const toDate = new Date();
+    const fromDate = new Date();
+    fromDate.setMonth(toDate.getMonth() - 3);
+
+    const from = fromDate.toISOString().split("T")[0];
+    const to = toDate.toISOString().split("T")[0];
+
+    try {
+        const res = await fetch(`/api/ipo-calendar?from=${from}&to=${to}`);
+        if (!res.ok) throw new Error("Failed to fetch IPO calendar");
+        const data = await res.json();
+
+        if (!data.ipoCalendar || data.ipoCalendar.length === 0) {
+            container.innerHTML = "<p>No IPO events found for this period.</p>";
+            return;
+        }
+
+        const rows = data.ipoCalendar
+            .map(
+                (ipo) => `
+            <tr>
+                <td>${ipo.date}</td>
+                <td>${ipo.exchange}</td>
+                <td>${ipo.name}</td>
+                <td>${ipo.symbol}</td>
+                <td>${ipo.numberOfShares ?? "N/A"}</td>
+                <td>${ipo.price ?? "N/A"}</td>
+                <td>${ipo.status}</td>
+                <td>${ipo.totalSharesValue ?? "N/A"}</td>
+            </tr>
+        `
+            )
+            .join("");
+
+        container.innerHTML = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Exchange</th>
+                        <th>Company Name</th>
+                        <th>Symbol</th>
+                        <th>Shares Offered</th>
+                        <th>Price</th>
+                        <th>Status</th>
+                        <th>Total Shares Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${rows}
+                </tbody>
+            </table>
+        `;
+    } catch (error) {
+        container.innerHTML = "<p>Failed to load IPO calendar data.</p>";
+        console.error("Error loading IPO calendar:", error);
     }
 }

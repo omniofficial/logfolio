@@ -713,6 +713,70 @@ body > header {
     font-style: italic;
     margin-top: 0.5rem;
 }
+/* Insider Sentiment & IPO Calendar Sections */
+
+#insiderSentiment,
+#ipoCalendar {
+    border-bottom: 2px solid #e63946;
+    padding-bottom: 2rem;
+    margin-bottom: 3rem;
+}
+
+#insiderSentimentDetails,
+#ipoCalendarDetails {
+    color: #ccc;
+    font-size: 1rem;
+}
+
+/* Table styling for insider sentiment & IPO calendar */
+#insiderSentimentDetails table,
+#ipoCalendarDetails table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    color: #eee;
+}
+
+#insiderSentimentDetails th,
+#insiderSentimentDetails td,
+#ipoCalendarDetails th,
+#ipoCalendarDetails td {
+    border: 1px solid #555;
+    padding: 0.6rem 1rem;
+    text-align: left;
+}
+
+#insiderSentimentDetails thead th,
+#ipoCalendarDetails thead th {
+    background-color: #e63946;
+    color: white;
+    font-weight: 600;
+}
+
+#insiderSentimentDetails tbody tr:nth-child(even),
+#ipoCalendarDetails tbody tr:nth-child(even) {
+    background-color: #2a2a2a;
+}
+
+#insiderSentimentDetails tbody tr:hover,
+#ipoCalendarDetails tbody tr:hover {
+    background-color: #444;
+}
+#ipoCalendarScroll {
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: 300px; /* or whatever height fits your design */
+    border: 1px solid #444;
+    border-radius: 8px;
+}
+
+/* Responsive text smaller on narrow screens */
+@media (max-width: 600px) {
+    #insiderSentimentDetails table,
+    #ipoCalendarDetails table {
+        font-size: 0.85rem;
+    }
+}
 
 /* Responsive tweak */
 @media (max-width: 640px) {
