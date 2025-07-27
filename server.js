@@ -1,4 +1,3 @@
-// index.js
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
@@ -111,6 +110,24 @@ app.get("/api/trades", async (req, res) => {
         console.error(error);
         res.status(500).json({ error: "Failed to get trades" });
     }
+});
+
+// API route: Get a single trade by ID
+app.get("/api/trades/:id", async (req, res) => {
+    try {
+        const trade = await Trade.findById(req.params.id);
+        if (!trade) {
+            return res.status(404).json({ error: "Trade not found" });
+        }
+        res.json(trade);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Failed to fetch trade" });
+    }
+});
+
+app.get("/journal/:id", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "journal-entry.html"));
 });
 
 app.listen(PORT, () => {
