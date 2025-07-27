@@ -7,23 +7,29 @@
 }
 
 body {
+    padding-top: 80px; /* equal or greater than .header-bar height */
     background-color: #121212;
     color: #eee;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
 }
-
 /* Header Bar */
 .header-bar {
+    margin-top: 0;
+    padding-top: 1rem; /* keep your padding */
+    position: fixed; /* if you want it fixed at the top */
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     background-color: #1e1e1e;
     padding: 1rem 2rem;
     box-shadow: 0 2px 8px rgba(230, 57, 70, 0.7);
-    position: relative;
-    z-index: 10;
+    z-index: 999;
 }
 .header-bar::after {
     content: "";
@@ -34,7 +40,6 @@ body {
     width: 100%;
     background: linear-gradient(to right, #e63946, #ff6b6b);
     box-shadow: 0 0 12px #e63946;
-    z-index: 1;
 }
 
 .nav-left,
@@ -74,6 +79,7 @@ body {
 
 /* Hero Section */
 .hero-section {
+    padding-top: 80px;
     position: relative;
     width: 100%;
     height: 400px;
@@ -85,9 +91,12 @@ body {
     height: 100%;
     object-fit: cover;
     filter: brightness(0.4);
+    position: relative;
+    z-index: 1;
 }
 
 .hero-overlay {
+    z-index: 2;
     position: absolute;
     top: 0;
     left: 0;
@@ -96,6 +105,9 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 1rem;
+    padding: 0 1rem;
+    text-align: center;
 }
 
 .hero-overlay h1 {
