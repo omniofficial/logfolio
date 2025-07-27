@@ -3,9 +3,14 @@ const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
 const axios = require("axios");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Import your existing User model
+const User = require("./models/User");
 
 // Middleware
 app.use(express.json());
@@ -40,8 +45,127 @@ const tradeSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
 });
-
 const Trade = mongoose.model("Trade", tradeSchema);
+
+// --- Authentication Middleware ---
+
+// Checks for a valid token
+function authenticate(req, res, next) {
+    const authHeader = req.headers.authorization;
+    const token = authHeader && authHeader.split(" ")[1];
+
+    if (!token) return res.status(401).json({ message: "Missing token" });
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = decoded; // Attach user info to the request
+        next();
+    } catch (err) {
+        return res.status(403).json({ message: "Invalid token" });
+    }
+}
+
+// Restrict route to specific roles (admin, etc.)
+function authorize(...roles) {
+    return (req, res, next) => {
+        if (!req.user || !roles.includes(req.user.role)) {
+            return res.status(403).json({ message: "Forbidden" });
+        }
+        next();
+    };
+}
+
+// --- AUTH ROUTES ---
+
+// Register route
+app.post("/register", async (req, res) => {
+    try {
+        const { name, email, password, role } = req.body;
+        if (!name || !email || !password) {
+            return res.status(400).json({ message: "Missing required fields" });
+        }
+
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(409).json({ message: "Email already in use" });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        const newUser = new User({
+            name,
+            email,
+            password: hashedPassword,
+            role: role || "user",
+        });
+
+        await newUser.save();
+
+        const token = jwt.sign(
+            { id: newUser._id, role: newUser.role },
+            process.env.JWT_SECRET,
+            { expiresIn: "7d" }
+        );
+
+        res.json({ token });
+    } catch (err) {
+        console.error("Register error:", err);
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
+// Login route
+app.post("/login", async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        if (!email || !password) {
+            return res
+                .status(400)
+                .json({ message: "Missing email or password" });
+        }
+
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(401).json({ message: "Invalid credentials" });
+        }
+
+        const validPassword = await bcrypt.compare(password, user.password);
+        if (!validPassword) {
+            return res.status(401).json({ message: "Invalid credentials" });
+        }
+
+        const token = jwt.sign(
+            { id: user._id, role: user.role },
+            process.env.JWT_SECRET,
+            { expiresIn: "7d" }
+        );
+
+        console.log(`A User connected: ${token}`);
+
+        res.json({ token });
+    } catch (err) {
+        console.error("Login error:", err);
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
+// --- LOGOUT ROUTE ---
+
+app.post("/logout", (req, res) => {
+    const token =
+        req.headers.authorization?.split(" ")[1] || req.body.token || null;
+    console.log("Authorization header:", req.headers.authorization);
+    console.log("Logout route hit. Token received:", token); // DEBUG
+
+    if (token) {
+        console.log(`A User disconnected: ${token}`);
+    } else {
+        console.log("Logout requested but no token provided");
+    }
+
+    res.json({ message: "Logged out" });
+});
 
 // --- API Routes ---
 
@@ -94,6 +218,7 @@ app.get("/api/company-profile", async (req, res) => {
         res.status(500).json({ error: "Failed to fetch company profile" });
     }
 });
+
 // Analyst recommendations route
 app.get("/api/recommendations", async (req, res) => {
     const symbol = req.query.symbol;
@@ -109,8 +234,6 @@ app.get("/api/recommendations", async (req, res) => {
         )}&token=${process.env.FINNHUB_API_KEY}`;
         const response = await axios.get(url);
 
-        // Finnhub returns an array of recommendations (usually sorted by date desc)
-        // We'll return the most recent entry (first element)
         if (response.data && response.data.length > 0) {
             res.json(response.data[0]);
         } else {
@@ -121,6 +244,7 @@ app.get("/api/recommendations", async (req, res) => {
         res.status(500).json({ error: "Failed to fetch recommendations" });
     }
 });
+
 // Insider Sentiment route
 app.get("/api/insider-sentiment", async (req, res) => {
     const symbol = req.query.symbol;
@@ -217,7 +341,7 @@ app.get("/api/trades/:id", async (req, res) => {
     }
 });
 
-// Updated server.js news route with better filtering
+// News route with filtering
 app.get("/api/news", async (req, res) => {
     const symbol = req.query.symbol;
     if (!symbol) {
@@ -238,7 +362,7 @@ app.get("/api/news", async (req, res) => {
                 q: query,
                 sortBy: "publishedAt",
                 language: "en",
-                apiKey: process.env.NEWS_API_KEY, // moved to env
+                apiKey: process.env.NEWS_API_KEY,
                 pageSize: 5,
                 sources: [
                     "bloomberg",

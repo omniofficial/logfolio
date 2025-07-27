@@ -1,3 +1,5 @@
+// public/script.js:
+
 document.addEventListener("DOMContentLoaded", () => {
     // ===== TRADE FORM LOGIC (only if form exists) =====
     const symbolInput = document.getElementById("symbol");

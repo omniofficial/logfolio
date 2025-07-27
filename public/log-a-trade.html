@@ -9,13 +9,14 @@
     <body>
         <header class="header-bar">
             <nav class="nav-left">
-                <a href="index.html" class="nav-link">HOME</a>
-                <a href="log-a-trade.html" class="nav-link">LOG A TRADE</a>
-                <a href="journal.html" class="nav-link">JOURNAL</a>
+                <a href="/" class="nav-link">HOME</a>
+                <a href="/log-a-trade.html" class="nav-link">LOG A TRADE</a>
+                <a href="/journal.html" class="nav-link">JOURNAL</a>
             </nav>
             <nav class="nav-right">
-                <button class="btn login-btn">Login</button>
-                <button class="btn signout-btn">Sign Out</button>
+                <button id="loginBtn" class="btn">Login</button>
+                <button id="registerBtn" class="btn">Register</button>
+                <button id="logoutBtn" class="btn hidden">Logout</button>
             </nav>
         </header>
         <header>Log a Trade</header>
@@ -157,5 +158,6 @@
         </main>
 
         <script src="script.js"></script>
+        <script src="auth.js"></script>
     </body>
 </html>
