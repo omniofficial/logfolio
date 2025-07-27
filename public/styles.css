@@ -363,6 +363,104 @@ body {
     margin-bottom: 0;
     padding-bottom: 0;
 }
+.pricing-cards {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    flex-wrap: wrap; /* for responsiveness */
+    margin-top: 2rem;
+}
+
+.pricing-card {
+    flex: 1 1 280px; /* grow/shrink, min width */
+    max-width: 350px;
+    background-color: transparent; /* no background to emphasize outline */
+    border: 2px solid #e63946; /* red outline */
+    border-radius: 12px;
+    padding: 2rem 1.5rem;
+    color: #eee;
+    box-shadow: none; /* remove any existing shadows for cleaner look */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: box-shadow 0.3s ease, background-color 0.3s ease;
+}
+
+/* Highlight featured card with filled red background and white text */
+.pricing-card.featured {
+    background-color: #e63946;
+    color: #fff;
+    border-color: #e63946;
+    box-shadow: 0 0 15px #e63946aa;
+}
+
+/* Button inside pricing cards - full width & matching colors */
+.pricing-card .btn {
+    margin-top: auto; /* push button to bottom */
+    width: 100%;
+    background-color: transparent;
+    color: #e63946;
+    border: 2px solid #e63946;
+    font-weight: 700;
+    padding: 0.75rem 0;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.pricing-card.featured .btn {
+    background-color: #fff;
+    color: #e63946;
+    border-color: #fff;
+}
+
+.pricing-card .btn:hover {
+    background-color: #e63946;
+    color: white;
+    border-color: #d62828;
+}
+
+.pricing-card.featured .btn:hover {
+    background-color: #d62828;
+    color: white;
+    border-color: #d62828;
+}
+
+/* Pricing header and price styling */
+.pricing-card h3 {
+    margin-bottom: 0.5rem;
+    font-size: 1.6rem;
+}
+
+.pricing-card .price {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+/* Pricing list */
+.pricing-card ul {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 1.5rem;
+    width: 100%;
+}
+
+.pricing-card ul li {
+    margin-bottom: 0.6rem;
+    text-align: center;
+    color: #ccc;
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+    .pricing-cards {
+        flex-direction: column;
+        align-items: center;
+    }
+    .pricing-card {
+        max-width: 90%;
+    }
+}
 
 /* Scrollbars */
 #logsContainer::-webkit-scrollbar {
