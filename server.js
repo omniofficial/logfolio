@@ -121,6 +121,40 @@ app.get("/api/recommendations", async (req, res) => {
         res.status(500).json({ error: "Failed to fetch recommendations" });
     }
 });
+// Insider Sentiment route
+app.get("/api/insider-sentiment", async (req, res) => {
+    const symbol = req.query.symbol;
+    const from = req.query.from;
+    const to = req.query.to;
+
+    if (!symbol || !from || !to) {
+        return res
+            .status(400)
+            .json({
+                error: "symbol, from, and to query parameters are required",
+            });
+    }
+
+    try {
+        const url = `https://finnhub.io/api/v1/stock/insider-sentiment?symbol=${encodeURIComponent(
+            symbol
+        )}&from=${from}&to=${to}&token=${process.env.FINNHUB_API_KEY}`;
+        const response = await axios.get(url);
+
+        if (
+            response.data &&
+            response.data.data &&
+            response.data.data.length > 0
+        ) {
+            res.json(response.data);
+        } else {
+            res.status(404).json({ error: "No insider sentiment data found" });
+        }
+    } catch (error) {
+        console.error("Error fetching insider sentiment:", error.message);
+        res.status(500).json({ error: "Failed to fetch insider sentiment" });
+    }
+});
 
 // Create trade
 app.post("/api/trades", async (req, res) => {

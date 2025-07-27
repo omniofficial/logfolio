@@ -71,6 +71,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         // Load analyst recommendations
         loadRecommendations(trade.symbol);
+
+        // Load insider sentiment data
+        loadInsiderSentiment(trade.symbol);
     } catch (err) {
         console.error("Error loading trade or news:", err);
         container.innerHTML = "<p>Failed to load journal entry.</p>";
@@ -106,5 +109,62 @@ async function loadRecommendations(symbol) {
         recContainer.innerHTML =
             "<p>Failed to load analyst recommendations.</p>";
         console.error("Error loading recommendations:", err);
+    }
+}
+
+async function loadInsiderSentiment(symbol) {
+    const container = document.getElementById("insiderSentimentDetails");
+    if (!container) return;
+
+    // Calculate date range: last 6 months
+    const toDate = new Date();
+    const fromDate = new Date();
+    fromDate.setMonth(toDate.getMonth() - 6);
+
+    const from = fromDate.toISOString().split("T")[0];
+    const to = toDate.toISOString().split("T")[0];
+
+    try {
+        const res = await fetch(
+            `/api/insider-sentiment?symbol=${encodeURIComponent(
+                symbol
+            )}&from=${from}&to=${to}`
+        );
+        if (!res.ok) throw new Error("No insider sentiment data");
+        const data = await res.json();
+
+        if (!data.data || data.data.length === 0) {
+            container.innerHTML = "<p>No insider sentiment data available.</p>";
+            return;
+        }
+
+        const rows = data.data
+            .map(
+                (item) => `
+            <tr>
+                <td>${item.year}-${String(item.month).padStart(2, "0")}</td>
+                <td>${item.change}</td>
+                <td>${item.mspr.toFixed(2)}</td>
+            </tr>`
+            )
+            .join("");
+
+        container.innerHTML = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>Month</th>
+                        <th>Change (Net insider transactions)</th>
+                        <th>MSPR (Monthly Share Purchase Ratio)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${rows}
+                </tbody>
+            </table>
+        `;
+    } catch (error) {
+        container.innerHTML = "<p>Failed to load insider sentiment data.</p>";
+        console.error("Error loading insider sentiment:", error);
     }
 }
