@@ -11,11 +11,12 @@
         <link rel="stylesheet" href="styles.css" />
     </head>
     <body>
+        <!-- Navigation -->
         <header class="header-bar">
             <nav class="nav-left">
-                <a href="index.html" class="nav-link">HOME</a>
-                <a href="log-a-trade.html" class="nav-link">LOG A TRADE</a>
-                <a href="journal.html" class="nav-link">JOURNAL</a>
+                <a href="/" class="nav-link">HOME</a>
+                <a href="/log-a-trade.html" class="nav-link">LOG A TRADE</a>
+                <a href="/journal.html" class="nav-link">JOURNAL</a>
             </nav>
             <nav class="nav-right">
                 <button class="btn login-btn">Login</button>
@@ -23,7 +24,7 @@
             </nav>
         </header>
 
-        <!-- Hero Section with Background Image -->
+        <!-- Hero Section -->
         <section class="hero-section">
             <img
                 src="images/mainimage.png"
@@ -32,41 +33,218 @@
             />
             <div class="hero-overlay">
                 <h1>LOGFOLIO</h1>
+                <p>Your personal trade journal and analytics dashboard</p>
+                <a href="log-a-trade.html" class="btn">Get Started</a>
             </div>
         </section>
 
-        <!-- Content Sections -->
+        <!-- Mission -->
         <main class="main-content">
             <section class="content-section">
                 <h2>Our Mission</h2>
                 <p>
-                    At Logfolio, our mission is to help traders of all
-                    experience levels track and analyze their trades with ease,
-                    enabling smarter decisions and better results.
+                    At Logfolio, our mission is to empower traders by giving
+                    them the tools they need to reflect, adapt, and grow through
+                    every trade.
                 </p>
             </section>
 
+            <!-- Features Section -->
             <section class="content-section">
-                <h2>Subheading 2</h2>
-                <p>
-                    We believe in providing a clean, intuitive interface that
-                    puts your trading data front and center, making your journal
-                    both useful and enjoyable.
-                </p>
+                <h2>Features</h2>
+                <ul class="feature-list">
+                    <li>
+                        <i class="bx bx-notepad"></i>
+                        <div>
+                            <h3>Trade Journaling</h3>
+                            <p>
+                                Log every trade with full details, screenshots,
+                                and strategy notes.
+                            </p>
+                        </div>
+                    </li>
+                    <li>
+                        <i class="bx bx-bar-chart-alt-2"></i>
+                        <div>
+                            <h3>Analytics Dashboard</h3>
+                            <p>
+                                Gain insight with performance breakdowns, win
+                                rates, and metrics.
+                            </p>
+                        </div>
+                    </li>
+                    <li>
+                        <i class="bx bx-cloud-upload"></i>
+                        <div>
+                            <h3>Cloud Sync</h3>
+                            <p>
+                                Your data is backed up securely and accessible
+                                from anywhere.
+                            </p>
+                        </div>
+                    </li>
+                    <li>
+                        <i class="bx bx-bulb"></i>
+                        <div>
+                            <h3>Learning Engine</h3>
+                            <p>
+                                Get AI-generated trade reviews and related
+                                market articles.
+                            </p>
+                        </div>
+                    </li>
+                </ul>
             </section>
 
+            <!-- How it Works -->
+            <section class="content-section alt-bg">
+                <h2>How It Works</h2>
+                <div class="steps-container">
+                    <div class="step">
+                        <span class="step-number">1</span>
+                        <h3>Log Your Trade</h3>
+                        <p>
+                            Enter the details: ticker, entry/exit, quantity, and
+                            your strategy.
+                        </p>
+                    </div>
+                    <div class="step">
+                        <span class="step-number">2</span>
+                        <h3>Reflect</h3>
+                        <p>
+                            Review your journal with annotated results and
+                            charts.
+                        </p>
+                    </div>
+                    <div class="step">
+                        <span class="step-number">3</span>
+                        <h3>Learn</h3>
+                        <p>
+                            Read auto-curated articles and feedback tailored to
+                            your trades.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Testimonials -->
             <section class="content-section">
-                <h2>Subheading 3</h2>
-                <p>
-                    Our platform encourages learning and growth, allowing you to
-                    reflect on your past trades and continually improve your
-                    strategy.
-                </p>
+                <h2>What Traders Are Saying</h2>
+                <div class="testimonials">
+                    <div class="testimonial">
+                        <p>
+                            “I’ve used spreadsheets for years. Logfolio is a
+                            game changer — tracking trades is actually enjoyable
+                            now.”
+                        </p>
+                        <strong>- Jamie T., Options Trader</strong>
+                    </div>
+                    <div class="testimonial">
+                        <p>
+                            “The reflection tools helped me break a cycle of bad
+                            habits. My P/L turned around within a month.”
+                        </p>
+                        <strong>- Miguel A., Swing Trader</strong>
+                    </div>
+                    <div class="testimonial">
+                        <p>
+                            “The AI summaries and market articles are awesome. I
+                            feel like I have a coach reviewing my trades.”
+                        </p>
+                        <strong>- Priya R., Day Trader</strong>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Pricing Section -->
+            <section class="content-section alt-bg">
+                <h2>Pricing</h2>
+                <div class="pricing-cards">
+                    <div class="pricing-card">
+                        <h3>Free</h3>
+                        <p class="price">$0/mo</p>
+                        <ul>
+                            <li>Log up to 25 trades</li>
+                            <li>Basic journaling</li>
+                            <li>View trade history</li>
+                        </ul>
+                        <button class="btn">Start Free</button>
+                    </div>
+                    <div class="pricing-card featured">
+                        <h3>Pro</h3>
+                        <p class="price">$12/mo</p>
+                        <ul>
+                            <li>Unlimited trades</li>
+                            <li>Analytics dashboard</li>
+                            <li>AI trade reviews</li>
+                            <li>Trade screenshots</li>
+                        </ul>
+                        <button class="btn">Upgrade</button>
+                    </div>
+                    <div class="pricing-card">
+                        <h3>Elite</h3>
+                        <p class="price">$29/mo</p>
+                        <ul>
+                            <li>All Pro features</li>
+                            <li>One-on-one strategy feedback</li>
+                            <li>Priority support</li>
+                        </ul>
+                        <button class="btn">Go Elite</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- FAQ Section -->
+            <section class="content-section">
+                <h2>Frequently Asked Questions</h2>
+                <div class="faq">
+                    <div class="faq-item">
+                        <h4>Is my trading data secure?</h4>
+                        <p>
+                            Yes, all data is encrypted and stored securely in
+                            the cloud.
+                        </p>
+                    </div>
+                    <div class="faq-item">
+                        <h4>Can I cancel anytime?</h4>
+                        <p>
+                            Absolutely. There are no contracts, and you can
+                            downgrade or cancel at any time.
+                        </p>
+                    </div>
+                    <div class="faq-item">
+                        <h4>Does Logfolio support screenshots or notes?</h4>
+                        <p>
+                            Yes, you can upload screenshots and add detailed
+                            notes to any journal entry.
+                        </p>
+                    </div>
+                </div>
             </section>
         </main>
 
+        <!-- Footer -->
         <footer class="footer">
-            <p>&copy; 2025 Logfolio. All rights reserved.</p>
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <h2>LOGFOLIO</h2>
+                    <p>Trade smarter. Learn faster.</p>
+                </div>
+                <div class="footer-links">
+                    <a href="/" class="nav-link">HOME</a>
+                    <a href="/log-a-trade.html" class="nav-link">LOG A TRADE</a>
+                    <a href="/journal.html" class="nav-link">JOURNAL</a>
+                </div>
+                <div class="footer-socials">
+                    <i class="bx bxl-twitter"></i>
+                    <i class="bx bxl-discord"></i>
+                    <i class="bx bxl-github"></i>
+                </div>
+            </div>
+            <p class="footer-copy">
+                &copy; 2025 Logfolio. All rights reserved.
+            </p>
         </footer>
+        <script src="script.js"></script>
     </body>
 </html>
