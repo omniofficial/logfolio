@@ -78,11 +78,22 @@ async function loadJournal() {
 // Helpers
 function groupTradesByDate(trades) {
     const grouped = {};
+
+    // Sort trades by effective date first
+    trades.sort((a, b) => {
+        const aDate = new Date(a.exitDate || a.entryDate || a.createdAt);
+        const bDate = new Date(b.exitDate || b.entryDate || b.createdAt);
+        return bDate - aDate; // descending
+    });
+
     trades.forEach((trade) => {
-        const date = new Date(trade.createdAt).toISOString().split("T")[0];
+        const rawDate = trade.exitDate || trade.entryDate || trade.createdAt;
+        const date = new Date(rawDate).toISOString().split("T")[0];
+
         if (!grouped[date]) grouped[date] = [];
         grouped[date].push(trade);
     });
+
     return grouped;
 }
 

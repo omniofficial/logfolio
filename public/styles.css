@@ -588,6 +588,22 @@ body > header {
     user-select: none;
 }
 
+.journal-day {
+    background-color: #2a2a2a; /* grey background */
+    border: 2px solid #e63946; /* red border */
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 0 12px rgba(230, 57, 70, 0.5);
+}
+
+.journal-day > h2 {
+    color: #e63946;
+    margin-bottom: 1rem;
+    font-weight: 700;
+    text-shadow: 0 0 8px #e63946;
+}
+
 /* Inputs and selects and textarea */
 .entry-section input[type="text"],
 .entry-section input[type="number"],

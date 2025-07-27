@@ -110,7 +110,7 @@ app.post("/api/trades", async (req, res) => {
 // Get all trades
 app.get("/api/trades", async (req, res) => {
     try {
-        const trades = await Trade.find().sort({ createdAt: -1 });
+        const trades = await Trade.find().sort({ exitDate: -1, entryDate: -1 });
         res.json(trades);
     } catch (err) {
         console.error(err);
