@@ -10,9 +10,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const loginBtn = document.getElementById("loginBtn");
     const registerBtn = document.getElementById("registerBtn");
     const logoutBtn = document.getElementById("logoutBtn");
-    const adminLink = document.getElementById("adminLink"); // Add this for admin nav link
+    const adminLink = document.getElementById("adminLink"); // Added this for admin nav link
 
-    // Add click handlers to navigate to auth page
+    // Added click handlers to navigate to auth page
     loginBtn?.addEventListener("click", () => {
         window.location.href = "/auth.html";
     });

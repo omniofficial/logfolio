@@ -271,8 +271,7 @@ app.delete("/api/trades/:id", authenticate, async (req, res) => {
 });
 
 // --- PAGE ROUTES ---
-
-// Serve journal entry page with dynamic param (you can keep this if you want)
+// Serve journal entry page with dynamic param
 app.get("/journal/:id", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "journal-entry.html"));
 });

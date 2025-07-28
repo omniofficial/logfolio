@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     setTimeout(() => {
                         symbolList.classList.add("hidden");
                     }, 100);
-                    symbolInput.focus(); // Optional: refocus input after selecting
+                    symbolInput.focus(); // Refocus input after selecting
                 });
 
                 symbolList.appendChild(div);
@@ -182,7 +182,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // ===== TESTIMONIAL LOGIC (always safe to run) =====
+    // ===== TESTIMONIAL LOGIC =====
     const testimonials = document.querySelectorAll(".testimonial");
     const prevBtn = document.querySelector(".testimonial-arrow.left");
     const nextBtn = document.querySelector(".testimonial-arrow.right");
