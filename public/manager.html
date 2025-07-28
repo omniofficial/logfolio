@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Admin Dashboard</title>
+        <link rel="stylesheet" href="styles.css" />
+    </head>
+    <body>
+        <!-- Navigation -->
+        <header class="header-bar">
+            <nav class="nav-left">
+                <a href="/" class="nav-link">HOME</a>
+                <a href="/log-a-trade.html" class="nav-link">LOG A TRADE</a>
+                <a href="/journal.html" class="nav-link">JOURNAL</a>
+                <a
+                    href="/manager.html"
+                    class="nav-link"
+                    id="adminLink"
+                    style="display: none"
+                    >ADMIN</a
+                >
+            </nav>
+            <nav class="nav-right">
+                <button id="loginBtn" class="btn">Login</button>
+                <button id="registerBtn" class="btn">Register</button>
+                <button id="logoutBtn" class="btn hidden">Logout</button>
+            </nav>
+        </header>
+
+        <header>Admin Dashboard - All Journal Entries</header>
+        <main class="container">
+            <div id="allJournalEntries" class="journal-entries">
+                <p>Loading all trades...</p>
+            </div>
+        </main>
+
+        <!-- External JS -->
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const container = document.getElementById("allJournalEntries");
+                const token = localStorage.getItem("token");
+
+                fetch("/api/trades", {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                })
+                    .then((res) => res.json())
+                    .then((data) => {
+                        if (!Array.isArray(data) || data.length === 0) {
+                            container.innerHTML = "<p>No entries found.</p>";
+                            return;
+                        }
+
+                        container.innerHTML = ""; // Clear loading message
+
+                        data.forEach((entry) => {
+                            const entryDiv = document.createElement("div");
+                            entryDiv.classList.add("journal-entry");
+
+                            entryDiv.innerHTML = `
+                <h3><a href="/journal-entry.html?id=${entry._id}">${
+                                entry.symbol
+                            } - ${entry.companyName}</a></h3>
+                <p><strong>Entry Price:</strong> $${entry.entryPrice}</p>
+                <p><strong>Exit Price:</strong> $${entry.exitPrice}</p>
+                <p><strong>User ID:</strong> ${entry.userId}</p>
+                <p><strong>Date:</strong> ${new Date(
+                    entry.date
+                ).toLocaleDateString()}</p>
+              `;
+
+                            container.appendChild(entryDiv);
+                        });
+                    })
+                    .catch((err) => {
+                        console.error("Error fetching all entries:", err);
+                        container.innerHTML = "<p>Error loading entries.</p>";
+                    });
+            });
+        </script>
+        <script src="/auth.js"></script>
+    </body>
+</html>

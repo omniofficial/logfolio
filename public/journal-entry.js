@@ -1,3 +1,14 @@
+// === Helper to get user role from JWT token ===
+function getUserRoleFromToken(token) {
+    try {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        return payload.role || null;
+    } catch (e) {
+        console.error("Failed to decode token:", e);
+        return null;
+    }
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
     const path = window.location.pathname;
 
@@ -106,10 +117,13 @@ async function handleViewEntryPage() {
                             Authorization: `Bearer ${token}`,
                         },
                     });
+
                     if (!delRes.ok) throw new Error("Failed to delete trade");
 
                     alert("Trade deleted successfully.");
-                    window.location.href = "/journal.html"; // Redirect after deletion
+                    const role = getUserRoleFromToken(token);
+                    window.location.href =
+                        role === "admin" ? "/manager.html" : "/journal.html";
                 } catch (err) {
                     alert("Error deleting trade.");
                     console.error(err);
@@ -203,6 +217,9 @@ async function handleEditEntryPage() {
         return;
     }
 
+    const role = getUserRoleFromToken(token);
+    const isAdmin = role === "admin";
+
     try {
         const res = await fetch(`/api/trades/${id}`, {
             headers: { Authorization: `Bearer ${token}` },
@@ -210,12 +227,11 @@ async function handleEditEntryPage() {
         if (!res.ok) throw new Error("Failed to load trade data");
         const trade = await res.json();
 
-        // Prefill form fields if present
         if (!form) return;
         form.symbol.value = trade.symbol || "";
         form.companyName.value = trade.companyName || "";
         form.tradeType.value = trade.tradeType || "buy";
-        // Capitalize the selected option's visible text to fix display issue
+
         const tradeTypeSelect = form.tradeType;
         if (tradeTypeSelect) {
             const selectedOption =
@@ -286,7 +302,7 @@ async function handleEditEntryPage() {
 
         try {
             const res = await fetch(`/api/trades/${id}`, {
-                method: "PATCH", // Changed from PUT to PATCH here
+                method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
@@ -300,7 +316,9 @@ async function handleEditEntryPage() {
             }
 
             alert("Entry updated successfully!");
-            window.location.href = `/journal-entry.html?id=${id}`;
+            window.location.href = isAdmin
+                ? "/manager.html"
+                : `/journal-entry.html?id=${id}`;
         } catch (error) {
             if (message)
                 message.textContent = "Error updating entry: " + error.message;
@@ -309,7 +327,9 @@ async function handleEditEntryPage() {
 
     if (cancelBtn) {
         cancelBtn.addEventListener("click", () => {
-            window.location.href = `/journal-entry.html?id=${id}`;
+            window.location.href = isAdmin
+                ? "/manager.html"
+                : `/journal-entry.html?id=${id}`;
         });
     }
 }

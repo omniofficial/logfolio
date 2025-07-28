@@ -172,10 +172,12 @@ app.post("/api/trades", authenticate, async (req, res) => {
 
 app.get("/api/trades", authenticate, async (req, res) => {
     try {
-        const trades = await Trade.find({ userId: req.user.id }).sort({
+        const filter = req.user.role === "admin" ? {} : { userId: req.user.id };
+        const trades = await Trade.find(filter).sort({
             exitDate: -1,
             entryDate: -1,
         });
+
         res.json(trades);
     } catch (err) {
         console.error("Error fetching user trades:", err);
@@ -185,15 +187,16 @@ app.get("/api/trades", authenticate, async (req, res) => {
 
 app.get("/api/trades/:id", authenticate, async (req, res) => {
     try {
-        const trade = await Trade.findOne({
-            _id: req.params.id,
-            userId: req.user.id,
-        });
+        const trade = await Trade.findById(req.params.id);
+
         if (!trade) {
-            return res
-                .status(404)
-                .json({ error: "Trade not found or unauthorized" });
+            return res.status(404).json({ error: "Trade not found" });
         }
+
+        if (trade.userId !== req.user.id && req.user.role !== "admin") {
+            return res.status(403).json({ error: "Unauthorized" });
+        }
+
         res.json(trade);
     } catch (err) {
         console.error("Error fetching trade:", err);
@@ -217,8 +220,13 @@ app.patch("/api/trades/:id", authenticate, async (req, res) => {
         updates.updatedAt = new Date();
 
         // Find trade owned by user and update
+        const filter =
+            req.user.role === "admin"
+                ? { _id: tradeId }
+                : { _id: tradeId, userId };
+
         const updatedTrade = await Trade.findOneAndUpdate(
-            { _id: tradeId, userId },
+            filter,
             { $set: updates },
             { new: true }
         );
@@ -242,10 +250,12 @@ app.delete("/api/trades/:id", authenticate, async (req, res) => {
         const tradeId = req.params.id;
         const userId = req.user.id;
 
-        const deletedTrade = await Trade.findOneAndDelete({
-            _id: tradeId,
-            userId,
-        });
+        const filter =
+            req.user.role === "admin"
+                ? { _id: tradeId }
+                : { _id: tradeId, userId };
+
+        const deletedTrade = await Trade.findOneAndDelete(filter);
 
         if (!deletedTrade) {
             return res

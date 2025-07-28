@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const loginBtn = document.getElementById("loginBtn");
     const registerBtn = document.getElementById("registerBtn");
     const logoutBtn = document.getElementById("logoutBtn");
+    const adminLink = document.getElementById("adminLink"); // Add this for admin nav link
 
     // Add click handlers to navigate to auth page
     loginBtn?.addEventListener("click", () => {
@@ -79,7 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Logout handler (now with better feedback)
+    // Logout handler
     logoutBtn?.addEventListener("click", async () => {
         const token = localStorage.getItem("token");
         console.log("Logout clicked. Token:", token);
@@ -136,5 +137,24 @@ document.addEventListener("DOMContentLoaded", () => {
         loginBtn?.classList.remove("hidden");
         registerBtn?.classList.remove("hidden");
         logoutBtn?.classList.add("hidden");
+    }
+
+    // Show/hide ADMIN link based on role
+    if (token) {
+        try {
+            const payload = JSON.parse(atob(token.split(".")[1]));
+            const role = payload.role;
+
+            if (role === "admin") {
+                if (adminLink) adminLink.style.display = "inline-block";
+            } else {
+                if (adminLink) adminLink.style.display = "none";
+            }
+        } catch (err) {
+            console.error("Failed to decode token:", err);
+            if (adminLink) adminLink.style.display = "none";
+        }
+    } else {
+        if (adminLink) adminLink.style.display = "none";
     }
 });
