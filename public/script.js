@@ -1,5 +1,3 @@
-// public/script.js:
-
 document.addEventListener("DOMContentLoaded", () => {
     // ===== TRADE FORM LOGIC (only if form exists) =====
     const symbolInput = document.getElementById("symbol");
@@ -132,15 +130,37 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
+            const token = localStorage.getItem("token");
+            if (!token) {
+                statusMsg.textContent = "Please log in before logging trades.";
+                statusMsg.style.color = "#f94144";
+                return;
+            }
+
             try {
                 statusMsg.textContent = "Logging trade...";
                 statusMsg.style.color = "#e63946";
 
                 const response = await fetch("/api/trades", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
                     body: JSON.stringify(tradeData),
                 });
+
+                if (response.status === 401 || response.status === 403) {
+                    statusMsg.textContent =
+                        "Session expired or unauthorized. Please log in again.";
+                    statusMsg.style.color = "#f94144";
+                    localStorage.removeItem("token");
+                    setTimeout(
+                        () => (window.location.href = "/login.html"),
+                        1500
+                    );
+                    return;
+                }
 
                 if (response.ok) {
                     statusMsg.textContent = "Trade logged successfully!";

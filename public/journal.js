@@ -3,8 +3,26 @@ document.addEventListener("DOMContentLoaded", loadJournal);
 async function loadJournal() {
     const container = document.getElementById("journalEntries");
 
+    const token = localStorage.getItem("token");
+    if (!token) {
+        window.location.href = "/login.html";
+        return;
+    }
+
     try {
-        const res = await fetch("/api/trades");
+        const res = await fetch("/api/trades", {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        if (res.status === 401 || res.status === 403) {
+            // Token is invalid or expired
+            localStorage.removeItem("token");
+            window.location.href = "/login.html";
+            return;
+        }
+
         const trades = await res.json();
 
         if (!Array.isArray(trades) || trades.length === 0) {
@@ -42,7 +60,7 @@ async function loadJournal() {
                         sign = "+";
                     } else if (rawProfit < 0) {
                         sign = "-";
-                        profitClass = "negative"; // <-- add this line
+                        profitClass = "negative";
                     }
                     profit = `${sign}$${Math.abs(rawProfit).toFixed(2)}`;
                 }
@@ -71,7 +89,8 @@ async function loadJournal() {
         }
     } catch (err) {
         console.error("Failed to load trades", err);
-        container.innerHTML = "<p>Error loading trade journal.</p>";
+        container.innerHTML =
+            "<p>Error loading trade journal. Please try again later.</p>";
     }
 }
 

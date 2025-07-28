@@ -12,7 +12,23 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     try {
-        const res = await fetch(`/api/trades/${id}`);
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+            window.location.href = "/login.html";
+            return;
+        }
+
+        const res = await fetch(`/api/trades/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        if (!res.ok) {
+            throw new Error("Failed to fetch trade");
+        }
+
         const trade = await res.json();
 
         const profit =
