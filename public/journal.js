@@ -1,5 +1,10 @@
 document.addEventListener("DOMContentLoaded", loadJournal);
 
+function capitalize(str) {
+    if (!str) return "";
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
+
 async function loadJournal() {
     const container = document.getElementById("journalEntries");
 
@@ -72,12 +77,13 @@ async function loadJournal() {
                 summary.innerHTML = `
   <strong>${trade.symbol}</strong>
   <span class="trade-type">${
-      trade.tradeType === "Long"
+      trade.tradeType.toLowerCase() === "long"
           ? "Buy"
-          : trade.tradeType === "Short"
+          : trade.tradeType.toLowerCase() === "short"
           ? "Sell"
-          : trade.tradeType
+          : capitalize(trade.tradeType)
   }</span>
+
   <span class="profit ${profitClass}">${profit}</span>
 `;
 

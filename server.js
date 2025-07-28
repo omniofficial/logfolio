@@ -200,31 +200,76 @@ app.get("/api/trades/:id", authenticate, async (req, res) => {
         res.status(500).json({ error: "Failed to fetch trade" });
     }
 });
-
-// --- PAGE ROUTE: journal-entry.html (Protected) ---
-app.get("/journal/:id", async (req, res) => {
-    const token = req.headers.authorization?.split(" ")[1];
-
-    if (!token) {
-        return res.status(401).send("Unauthorized");
-    }
-
+// PATCH /api/trades/:id - update trade except symbol & companyName
+app.patch("/api/trades/:id", authenticate, async (req, res) => {
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const trade = await Trade.findOne({
-            _id: req.params.id,
-            userId: decoded.id,
-        });
+        const tradeId = req.params.id;
+        const userId = req.user.id;
+        const updates = { ...req.body };
+        console.log(
+            `PATCH /api/trades/${tradeId} called by user ${userId} with data:`,
+            updates
+        );
+        // Prevent updating symbol and companyName
+        if ("symbol" in updates) delete updates.symbol;
+        if ("companyName" in updates) delete updates.companyName;
 
-        if (!trade) {
-            return res.status(403).send("Forbidden");
+        updates.updatedAt = new Date();
+
+        // Find trade owned by user and update
+        const updatedTrade = await Trade.findOneAndUpdate(
+            { _id: tradeId, userId },
+            { $set: updates },
+            { new: true }
+        );
+
+        if (!updatedTrade) {
+            return res
+                .status(404)
+                .json({ error: "Trade not found or unauthorized" });
         }
 
-        res.sendFile(path.join(__dirname, "public", "journal-entry.html"));
+        res.json(updatedTrade);
     } catch (err) {
-        console.error("Auth error on /journal/:id:", err.message);
-        res.status(403).send("Invalid or expired token");
+        console.error("Error updating trade:", err);
+        res.status(500).json({ error: "Failed to update trade" });
     }
+});
+
+// DELETE /api/trades/:id - delete a trade owned by user
+app.delete("/api/trades/:id", authenticate, async (req, res) => {
+    try {
+        const tradeId = req.params.id;
+        const userId = req.user.id;
+
+        const deletedTrade = await Trade.findOneAndDelete({
+            _id: tradeId,
+            userId,
+        });
+
+        if (!deletedTrade) {
+            return res
+                .status(404)
+                .json({ error: "Trade not found or unauthorized" });
+        }
+
+        res.json({ message: "Trade deleted successfully" });
+    } catch (err) {
+        console.error("Error deleting trade:", err);
+        res.status(500).json({ error: "Failed to delete trade" });
+    }
+});
+
+// --- PAGE ROUTES ---
+
+// Serve journal entry page with dynamic param (you can keep this if you want)
+app.get("/journal/:id", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "journal-entry.html"));
+});
+
+// Explicit route to serve journal-entry.html when accessed directly (with query params)
+app.get("/journal-entry.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "journal-entry.html"));
 });
 
 // --- EXTERNAL API ROUTES ---
@@ -376,7 +421,8 @@ app.get("/api/news", async (req, res) => {
 });
 
 // --- DEFAULT ROUTE ---
-app.get(/.*/, (req, res) => {
+// Adjusted to exclude /journal-entry.html and /journal/:id so they don't get overridden
+app.get(/^\/(?!journal-entry\.html$|journal\/).*/, (req, res) => {
     res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Edit Trade Entry</title>
+        <style>
+            /* Basic styling for clarity */
+            label {
+                display: block;
+                margin-bottom: 0.5rem;
+            }
+            input,
+            select,
+            textarea {
+                width: 100%;
+                max-width: 400px;
+                padding: 0.4rem;
+                margin-top: 0.2rem;
+            }
+            .btn {
+                margin-top: 1rem;
+                padding: 0.5rem 1rem;
+                cursor: pointer;
+            }
+            .btn-secondary {
+                margin-left: 1rem;
+                background: #ccc;
+            }
+            #message {
+                margin-top: 1rem;
+                font-weight: bold;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Edit Trade Entry</h1>
+
+        <form id="editEntryForm">
+            <label>
+                Symbol:
+                <input type="text" name="symbol" id="symbol" required />
+            </label>
+
+            <label>
+                Company Name:
+                <input type="text" name="companyName" id="companyName" />
+            </label>
+
+            <label>
+                Trade Type:
+                <select name="tradeType" id="tradeType" required>
+                    <option value="buy">Buy</option>
+                    <option value="sell">Sell</option>
+                </select>
+            </label>
+
+            <label>
+                Entry Price:
+                <input
+                    type="number"
+                    name="entryPrice"
+                    id="entryPrice"
+                    step="0.01"
+                    required
+                />
+            </label>
+
+            <label>
+                Exit Price:
+                <input
+                    type="number"
+                    name="exitPrice"
+                    id="exitPrice"
+                    step="0.01"
+                />
+            </label>
+
+            <label>
+                Quantity:
+                <input type="number" name="quantity" id="quantity" required />
+            </label>
+
+            <label>
+                Entry Date:
+                <input type="date" name="entryDate" id="entryDate" required />
+            </label>
+
+            <label>
+                Exit Date:
+                <input type="date" name="exitDate" id="exitDate" />
+            </label>
+
+            <label>
+                Stop Loss:
+                <input
+                    type="number"
+                    name="stopLoss"
+                    id="stopLoss"
+                    step="0.01"
+                />
+            </label>
+
+            <label>
+                Take Profit:
+                <input
+                    type="number"
+                    name="takeProfit"
+                    id="takeProfit"
+                    step="0.01"
+                />
+            </label>
+
+            <label>
+                Notes:<br />
+                <textarea name="notes" id="notes" rows="4"></textarea>
+            </label>
+
+            <button type="submit" class="btn">Save Changes</button>
+            <button type="button" id="cancelBtn" class="btn btn-secondary">
+                Cancel
+            </button>
+        </form>
+
+        <p id="message"></p>
+
+        <!-- Include your journal-entry.js script -->
+        <script src="journal-entry.js"></script>
+    </body>
+</html>
