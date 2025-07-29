@@ -429,6 +429,37 @@ app.get("/api/news", async (req, res) => {
     }
 });
 
+app.get("/api/trending", async (req, res) => {
+    try {
+        const options = {
+            method: "GET",
+            url: "https://apidojo-yahoo-finance-v1.p.rapidapi.com/market/get-trending-tickers",
+            params: { region: "US" },
+            headers: {
+                "x-rapidapi-key": process.env.RAPIDAPI_KEY,
+                "x-rapidapi-host": "apidojo-yahoo-finance-v1.p.rapidapi.com",
+            },
+        };
+
+        const response = await axios.request(options);
+
+        const tickers =
+            response.data?.finance?.result?.[0]?.quotes
+                ?.slice(0, 5)
+                .map((ticker) => ({
+                    symbol: ticker.symbol,
+                    price: ticker.regularMarketPrice,
+                    changePercent:
+                        ticker.regularMarketChangePercent?.toFixed(2),
+                })) || [];
+
+        res.json(tickers);
+    } catch (err) {
+        console.error("Error fetching trending tickers:", err.message);
+        res.status(500).json({ error: "Failed to fetch trending tickers" });
+    }
+});
+
 // --- DEFAULT ROUTE ---
 // Adjusted to exclude /journal-entry.html and /journal/:id so they don't get overridden
 app.get(/^\/(?!journal-entry\.html$|journal\/).*/, (req, res) => {

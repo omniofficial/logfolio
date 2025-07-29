@@ -227,4 +227,36 @@ document.addEventListener("DOMContentLoaded", () => {
             resetAutoCycle();
         });
     }
+
+    async function fetchTrendingTickers() {
+        const container = document.getElementById("trendingTickers");
+        if (!container) return;
+
+        try {
+            const response = await fetch("/api/trending");
+            const tickers = await response.json();
+
+            if (!Array.isArray(tickers) || tickers.length === 0) {
+                container.innerHTML = "No trending stocks found.";
+                return;
+            }
+
+            const html = tickers
+                .map(({ symbol, changePercent }) => {
+                    const positive = !changePercent.startsWith("-");
+                    const color = positive ? "#43aa8b" : "#f94144";
+                    return `<span style="margin-right: 10px; color: ${color}; font-weight: bold;">
+                    ${symbol} ${changePercent}%
+                </span>`;
+                })
+                .join("");
+
+            container.innerHTML = html;
+        } catch (error) {
+            console.error("Failed to load trending tickers:", error);
+            container.innerHTML = "Failed to load trending stocks.";
+        }
+    }
+
+    fetchTrendingTickers();
 });

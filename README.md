@@ -6,14 +6,14 @@ _Logfolio_ is a personal trade journal web application that allows users to log,
 
 ## Features
 
--   User authentication (JWT-based registration and login)
+-   User authentication (JWT based registration and login)
 -   Trade journaling with editable fields
 -   Performance tracking and historical trade logging
 -   Real-time symbol search via Finnhub
 -   Company profiles and stock recommendations
 -   Related financial news via NewsAPI
 -   Insider sentiment and IPO calendar data
--   Role-based access (admin & user)
+-   Role-based access (admin and user)
 -   Static and dynamic HTML pages
 
 ---
