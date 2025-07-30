@@ -33,11 +33,18 @@ npm install
 ### 3. Configure Environment Variables
 
 Create an .env file with the following format:
+
 PORT=3000
+
 MONGO_URI=your_mongo_connection_string
+
 JWT_SECRET=your_jwt_secret
+
 FINNHUB_API_KEY=your_finnhub_api_key
+
 NEWS_API_KEY=your_newsapi_key
+
+RAPIDAPI_KEY=your_rapidapi_key
 
 ### 4. Start the Server
 
